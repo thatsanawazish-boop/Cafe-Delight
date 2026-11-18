@@ -1,81 +1,92 @@
+import Image from "next/image";
 import Link from "next/link";
-import { ChefHat, Heart, Leaf, Mail, MapPin, Phone, Star, Truck } from "lucide-react";
+import { ChefHat, Heart, Leaf, Mail, MapPin, Phone, Truck } from "lucide-react";
+import { Suspense } from "react";
+import HomeReviews from "@/components/HomeReviews";
 import Leader from "@/components/Leader";
 import ProductCard from "@/components/ProductCard";
-import { cafe, reviews } from "@/lib/config";
+import Reveal from "@/components/Reveal";
+import { cafe } from "@/lib/config";
 import { categories, finalPrice, formatINR, getProducts } from "@/lib/products";
 
 const reasons = [
-  { icon: Leaf, title: "Freshly prepared", text: "Burgers, pizzas and pasta are made when you order them." },
-  { icon: ChefHat, title: "A menu for every mood", text: "Eight categories, from a quick espresso to a full pizza night." },
-  { icon: Truck, title: "Pickup or delivery", text: "Collect your order at the cafe or have it brought to your door." },
+  { icon: Leaf, title: "Freshly prepared", text: "Burgers, shawarma, pizza and sandwiches are made when you order them." },
+  { icon: ChefHat, title: "Something for every craving", text: "From a quick coffee to a family feast pizza, there is plenty to choose from." },
+  { icon: Truck, title: "Pickup or delivery", text: "Collect your order at the cafe or ask for it to be delivered." },
   { icon: Heart, title: "Simple ordering", text: "Build your cart here and send it to us on WhatsApp in one tap." },
 ];
 
 export default async function HomePage() {
   const products = await getProducts();
-  const bestsellers = products.filter((p) => p.bestseller && p.available).slice(0, 4);
+  const featured = products.filter((p) => p.featured && p.available).slice(0, 4);
   const offers = products.filter((p) => p.offer && p.available).slice(0, 4);
   const startingAt = (id: string) => {
     const prices = products.filter((p) => p.category === id && p.available).map((p) => finalPrice(p));
     return prices.length ? `from ${formatINR(Math.min(...prices))}` : "coming soon";
   };
-  const heroStyle = cafe.heroImage
-    ? { backgroundImage: `linear-gradient(rgba(42,24,16,.82), rgba(42,24,16,.82)), url(${cafe.heroImage})`, backgroundSize: "cover", backgroundPosition: "center" }
-    : undefined;
 
   return (
     <>
-      <section className="bg-espresso text-cream" style={heroStyle}>
-        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 lg:grid-cols-[1.15fr_1fr] lg:py-24">
+      <section className="bg-espresso text-cream">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-14 lg:grid-cols-[1.1fr_0.9fr] lg:py-20">
           <div>
-            <h1 className="font-display text-5xl font-semibold leading-[1.05] sm:text-6xl lg:text-7xl">{cafe.tagline}</h1>
-            <p className="mt-6 max-w-lg text-lg text-cream/80">
-              {cafe.name} serves burgers, pizza, pasta, shakes and freshly brewed coffee. Choose what you like, add it to your cart and send your order to us on WhatsApp.
+            <h1 className="hero-in font-display text-5xl font-semibold leading-[1.05] sm:text-6xl lg:text-7xl">{cafe.tagline}</h1>
+            <p className="hero-in mt-6 max-w-lg text-lg text-cream/80 [--d:140ms]">
+              {cafe.name} serves burgers, shawarma, pizza, sandwiches, shakes and coffee. Choose what you like, add it to your cart and send your order to us on WhatsApp.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="hero-in mt-8 flex flex-wrap gap-3 [--d:280ms]">
               <Link href="/menu" className="btn btn-gold">
                 Explore Menu
               </Link>
-              <a href="#bestsellers" className="btn btn-light">
+              <a href="#featured" className="btn btn-light">
                 Order Now
               </a>
             </div>
           </div>
-          <div className="rounded-3xl bg-paper p-7 text-espresso sm:p-9">
-            <h2 className="font-display text-2xl font-semibold">On the menu</h2>
-            <div className="mt-5 space-y-3">
-              {categories.map((c) => (
-                <Leader
-                  key={c.id}
-                  label={
-                    <span>
-                      <span aria-hidden>{c.emoji}</span> {c.label}
-                    </span>
-                  }
-                  value={startingAt(c.id)}
-                />
-              ))}
+          {cafe.heroImage && (
+            <div className="hero-in [--d:200ms] relative aspect-[4/5] max-h-[34rem] w-full overflow-hidden rounded-3xl">
+              <Image src={cafe.heroImage} alt={`The lit ${cafe.name} sign above the cafe entrance`} fill priority sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover object-[50%_25%]" />
             </div>
-            <Link href="/menu" className="mt-7 inline-block font-semibold underline underline-offset-4">
-              See the full menu
-            </Link>
-          </div>
+          )}
         </div>
       </section>
 
-      <section id="bestsellers" className="mx-auto max-w-6xl scroll-mt-20 px-4 pt-20">
-        <h2 className="font-display text-3xl font-semibold sm:text-4xl">Bestsellers</h2>
-        <p className="mt-2 max-w-xl text-roast">Good places to start if you’re not sure what to order.</p>
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {bestsellers.map((p) => (
-            <ProductCard key={p.id} p={p} />
-          ))}
+      <Reveal className="mx-auto max-w-6xl px-4 pt-20">
+        <div className="rounded-3xl border border-latte bg-paper p-7 sm:p-10">
+          <h2 className="font-display text-3xl font-semibold sm:text-4xl">On the menu</h2>
+          <div className="mt-8 grid gap-x-14 gap-y-4 md:grid-cols-2">
+            {categories.map((c) => (
+              <Leader
+                key={c.id}
+                label={
+                  <span>
+                    <span aria-hidden>{c.emoji}</span> {c.label}
+                  </span>
+                }
+                value={startingAt(c.id)}
+              />
+            ))}
+          </div>
+          <Link href="/menu" className="btn btn-gold mt-8">
+            See the full menu
+          </Link>
         </div>
-      </section>
+      </Reveal>
+
+      {featured.length > 0 && (
+        <Reveal id="featured" className="mx-auto max-w-6xl scroll-mt-20 px-4 pt-20">
+          <h2 className="font-display text-3xl font-semibold sm:text-4xl">From our menu</h2>
+          <p className="mt-2 max-w-xl text-roast">A small selection. The full menu has much more.</p>
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {featured.map((p) => (
+              <ProductCard key={p.id} p={p} />
+            ))}
+          </div>
+        </Reveal>
+      )}
 
       {offers.length > 0 && (
-        <section className="mx-auto max-w-6xl px-4 pt-20">
+        <Reveal className="mx-auto max-w-6xl px-4 pt-20">
           <h2 className="font-display text-3xl font-semibold sm:text-4xl">Special offers</h2>
           <p className="mt-2 max-w-xl text-roast">Prices shown already include the discount.</p>
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -83,10 +94,10 @@ export default async function HomePage() {
               <ProductCard key={p.id} p={p} />
             ))}
           </div>
-        </section>
+        </Reveal>
       )}
 
-      <section className="mx-auto max-w-6xl px-4 pt-20">
+      <Reveal className="mx-auto max-w-6xl px-4 pt-20">
         <h2 className="font-display text-3xl font-semibold sm:text-4xl">Why choose {cafe.name}</h2>
         <ul className="mt-8 grid gap-x-12 gap-y-8 sm:grid-cols-2">
           {reasons.map(({ icon: Icon, title, text }) => (
@@ -99,28 +110,13 @@ export default async function HomePage() {
             </li>
           ))}
         </ul>
-      </section>
+      </Reveal>
 
-      {reviews.length > 0 && (
-        <section className="mx-auto max-w-6xl px-4 pt-20">
-          <h2 className="font-display text-3xl font-semibold sm:text-4xl">What customers say</h2>
-          <div className="mt-8 grid gap-8 md:grid-cols-3">
-            {reviews.map((r, i) => (
-              <figure key={i} className="border-l-2 border-gold pl-5">
-                <div className="flex gap-0.5" role="img" aria-label={`${r.stars} out of 5 stars`}>
-                  {Array.from({ length: r.stars }, (_, n) => (
-                    <Star key={n} className="size-4 fill-gold text-gold" aria-hidden />
-                  ))}
-                </div>
-                <blockquote className="mt-3 font-display text-lg leading-snug">“{r.text}”</blockquote>
-                <figcaption className="mt-3 text-sm text-roast">{r.name}</figcaption>
-              </figure>
-            ))}
-          </div>
-        </section>
-      )}
+      <Suspense fallback={null}>
+        <HomeReviews />
+      </Suspense>
 
-      <section className="mx-auto mt-20 max-w-6xl px-4">
+      <Reveal className="mx-auto mt-20 max-w-6xl px-4">
         <div className="grid gap-10 rounded-3xl bg-latte/50 p-8 sm:p-12 md:grid-cols-2">
           <div>
             <h2 className="font-display text-3xl font-semibold">Opening hours</h2>
@@ -149,7 +145,7 @@ export default async function HomePage() {
             </Link>
           </div>
         </div>
-      </section>
+      </Reveal>
     </>
   );
 }

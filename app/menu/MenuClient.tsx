@@ -31,7 +31,7 @@ function Details({ p, onClose }: { p: Product; onClose: () => void }) {
             <VegMark veg={p.veg} />
             {p.veg ? "Vegetarian" : "Non-vegetarian"}
           </p>
-          <p className="text-roast">{p.description}</p>
+          {p.description && <p className="text-roast">{p.description}</p>}
           <p className="text-sm font-medium">{p.available ? "Available today" : "Sold out right now"}</p>
           <div className="flex items-center justify-between pt-2">
             <Price p={p} className="text-2xl" />
@@ -114,6 +114,8 @@ export default function MenuClient({ products }: { products: Product[] }) {
           </button>
         </div>
       )}
+
+      <p className="mt-10 text-sm text-roast">Add-ons: extra cheese, mayo or spicy on burgers, and extra cheese on footlongs, cost ₹15 extra. Mention them in your order instructions.</p>
 
       {selected && <Details p={selected} onClose={() => setSelected(null)} />}
     </div>

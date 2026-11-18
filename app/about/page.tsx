@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { cafe } from "@/lib/config";
 
@@ -6,9 +7,9 @@ export const metadata: Metadata = { title: "About us" };
 
 // Sample copy: rewrite it with the cafe's real story.
 const values = [
-  { title: "Our passion for food", text: "Food is why we are here. We love a crisp burger, a properly stretched pizza and a coffee pulled with care, and we want you to taste that in every order." },
-  { title: "Our quality promise", text: "Fresh ingredients, clean kitchens and honest prices. If something isn’t right with your order, tell us and we will put it right." },
-  { title: "Why customers love us", text: "Generous portions, friendly service and a menu with something for everyone, from vegetarians to confirmed coffee lovers." },
+  { title: "Our passion for food", text: "From a quick coffee to a family-sized pizza, we want every order to taste like it was made for you." },
+  { title: "Our quality promise", text: "We care about every order. If something isn’t right, tell us and we will put it right." },
+  { title: "Why customers love us", text: "A comfortable space with indoor seating, a big menu and quick, simple ordering." },
 ];
 
 export default function AboutPage() {
@@ -17,11 +18,11 @@ export default function AboutPage() {
       <h1 className="font-display text-4xl font-semibold sm:text-5xl">About {cafe.name}</h1>
       <div className="mt-8 grid gap-12 lg:grid-cols-[1.2fr_1fr]">
         <div className="max-w-prose space-y-5 text-lg leading-relaxed">
-          <p>{cafe.name} is a neighbourhood cafe for people who like their food hot, their coffee strong and their evenings unhurried. The menu runs from a quick espresso to a full pizza night, so there is always something for the table.</p>
-          <p>We keep the menu focused so every dish gets the attention it deserves, and we make ordering as easy as sending a message.</p>
+          <p>{cafe.name} is a relaxed cafe for burgers, shawarma, pizza, sandwiches, shakes and coffee. It is self-service: order at the counter, pay first and collect your food at the pickup point.</p>
+          <p>Prefer to skip the queue? Build your order on this website and send it to us on WhatsApp for pickup or delivery.</p>
         </div>
-        <div aria-hidden className="grid min-h-56 place-items-center rounded-3xl bg-latte/60 text-8xl">
-          ☕
+        <div className="relative min-h-64 overflow-hidden rounded-3xl">
+          <Image src="/images/interior-mural.jpg" alt="Inside the cafe: seating, the counter and a vintage car mural on the brick wall" fill sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover" />
         </div>
       </div>
       <div className="mt-16 grid gap-10 md:grid-cols-3">

@@ -3,7 +3,9 @@ import { finalPrice, formatINR, type Product } from "./products";
 import type { CartLine } from "./cart";
 
 export type OrderType = "pickup" | "delivery";
-export type Customer = { name: string; phone: string; type: OrderType; address: string; notes: string };
+export type PaymentMethod = "cash" | "upi" | "online";
+export const paymentLabels: Record<PaymentMethod, string> = { cash: "Cash", upi: "UPI", online: "Online payment" };
+export type Customer = { name: string; phone: string; type: OrderType; address: string; notes: string; payment: PaymentMethod };
 export type CartItem = { product: Product; qty: number };
 export type Errors = Partial<Record<"name" | "phone" | "address", string>>;
 
@@ -34,18 +36,19 @@ export function validateOrder(c: Customer): Errors {
   return errors;
 }
 
-export function buildOrderMessage(items: CartItem[], c: Customer): string {
+export function buildOrderMessage(items: CartItem[], c: Customer, orderNo?: string): string {
   const delivery = c.type === "delivery";
   const rows = items.map((i, n) => {
     const unit = finalPrice(i.product);
     return `${n + 1}. ${i.product.name} – ${i.qty} × ${formatINR(unit)} = ${formatINR(unit * i.qty)}`;
   });
   return [
-    `*New order – ${cafe.name}*`,
+    `*New order${orderNo ? ` ${orderNo}` : ""} – ${cafe.name}*`,
     "",
     `Name: ${c.name.trim()}`,
     `Phone: +91 ${normalizePhone(c.phone)}`,
     `Order type: ${delivery ? "Delivery" : "Pickup"}`,
+    `Payment method: ${paymentLabels[c.payment]}`,
     ...(delivery ? [`Address: ${c.address.trim()}`] : []),
     ...(c.notes.trim() ? [`Instructions: ${c.notes.trim()}`] : []),
     "",

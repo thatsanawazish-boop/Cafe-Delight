@@ -1,6 +1,7 @@
 // Central site settings. Edit this file to set up the cafe; no other file needs changing.
 export const cafe = {
   name: "Cafe Delight",
+  timezone: "Asia/Kolkata", // sales reports split days in this timezone
   tagline: "Taste the Happiness, One Bite at a Time.",
   // WhatsApp number that receives orders: country code + number, digits only (for example "919876543210").
   // PLACEHOLDER: online ordering stays switched off until this is replaced with the cafe's real number.
@@ -14,18 +15,11 @@ export const cafe = {
     ["Saturday and Sunday", "9:00 AM – 12:00 AM"],
   ] as [string, string][],
   deliveryFee: 0, // ₹ added to delivery orders (0 = free delivery)
-  heroImage: "", // optional home-page photo, for example "/images/hero.jpg" (put the file in /public/images)
-  mapEmbedUrl: "", // paste the src of Google Maps > Share > Embed a map
+  heroImage: "/images/storefront.jpg", // photo beside the home-page heading (file is in /public/images)
+  mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3792.774896477059!2d73.42636949999999!3d18.081972699999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be82ad3b13092d1%3A0xeec16ac24259d4aa!2sCafe%20Delight!5e0!3m2!1sen!2sin!4v1794921548099!5m2!1sen!2sin", // paste the src of Google Maps > Share > Embed a map
   // Generic links to the platforms: replace with the cafe's own profile URLs.
   social: [
     { label: "Instagram", href: "https://www.instagram.com/" },
     { label: "Facebook", href: "https://www.facebook.com/" },
   ],
 };
-
-// SAMPLE reviews so the page is not empty. Replace them with real customer reviews before launch.
-export const reviews = [
-  { name: "Sample reviewer", stars: 5, text: "Sample review: hot food, friendly service and a menu with something for everyone." },
-  { name: "Sample reviewer", stars: 5, text: "Sample review: the coffee and desserts are the reason we keep coming back." },
-  { name: "Sample reviewer", stars: 4, text: "Sample review: easy to order on WhatsApp and the pizza arrived just as we hoped." },
-];

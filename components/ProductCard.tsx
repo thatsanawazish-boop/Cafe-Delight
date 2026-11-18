@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Plus, Star } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { categories, finalPrice, formatINR, type Product } from "@/lib/products";
 
@@ -36,12 +36,6 @@ export function ProductImage({ p, className = "" }: { p: Product; className?: st
           {emojiOf(p)}
         </span>
       )}
-      {p.bestseller && (
-        <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-espresso px-3 py-1 text-xs font-semibold text-cream">
-          <Star className="size-3 fill-brass text-brass" aria-hidden />
-          Bestseller
-        </span>
-      )}
       {p.offer ? <span className="absolute right-3 top-3 rounded-full bg-gold px-3 py-1 text-xs font-semibold text-white">{p.offer}% off</span> : null}
       {!p.available && <span className="absolute inset-0 grid place-items-center bg-espresso/60 font-semibold text-cream">Sold out</span>}
     </div>
@@ -74,7 +68,7 @@ export default function ProductCard({ p, onOpen }: { p: Product; onOpen?: (p: Pr
           <h3 className="font-display text-lg font-semibold leading-snug">{p.name}</h3>
           <VegMark veg={p.veg} />
         </div>
-        <p className="line-clamp-2 text-sm text-roast">{p.description}</p>
+        {p.description && <p className="line-clamp-2 text-sm text-roast">{p.description}</p>}
         <div className="mt-auto flex items-center justify-between pt-3">
           <Price p={p} className="text-lg" />
           <button

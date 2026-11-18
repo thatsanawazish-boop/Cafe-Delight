@@ -6,6 +6,7 @@ const links = [
   { href: "/menu", label: "Menu" },
   { href: "/about", label: "About us" },
   { href: "/gallery", label: "Gallery" },
+  { href: "/reviews", label: "Reviews" },
   { href: "/contact", label: "Contact" },
   { href: "/cart", label: "Your cart" },
 ];

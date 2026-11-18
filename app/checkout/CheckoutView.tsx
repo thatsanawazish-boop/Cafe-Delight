@@ -6,16 +6,18 @@ import { MessageCircle } from "lucide-react";
 import Leader from "@/components/Leader";
 import { useCart } from "@/lib/cart";
 import { cafe } from "@/lib/config";
-import { buildOrderMessage, orderTotal, subtotal, toItems, validateOrder, whatsappReady, whatsappUrl, type Customer, type Errors } from "@/lib/order";
+import { buildOrderMessage, paymentLabels, orderTotal, subtotal, toItems, validateOrder, whatsappReady, whatsappUrl, type Customer, type Errors } from "@/lib/order";
 import { finalPrice, formatINR, type Product } from "@/lib/products";
+import { placeOrder } from "./actions";
 
-const blank: Customer = { name: "", phone: "", type: "pickup", address: "", notes: "" };
+const blank: Customer = { name: "", phone: "", type: "pickup", address: "", notes: "", payment: "cash" };
 
 export default function CheckoutView({ products }: { products: Product[] }) {
   const { lines, ready } = useCart();
   const [form, setForm] = useState<Customer>(blank);
   const [errors, setErrors] = useState<Errors>({});
   const [link, setLink] = useState("");
+  const [saving, setSaving] = useState(false);
   const items = toItems(lines, products);
   const canOrder = whatsappReady();
   const delivery = form.type === "delivery";
@@ -28,12 +30,20 @@ export default function CheckoutView({ products }: { products: Product[] }) {
       </p>
     ) : null;
 
-  function submit(e: FormEvent) {
+  async function submit(e: FormEvent) {
     e.preventDefault();
     const found = validateOrder(form);
     setErrors(found);
-    if (Object.keys(found).length > 0 || !canOrder) return;
-    const url = whatsappUrl(buildOrderMessage(items, form));
+    if (Object.keys(found).length > 0 || !canOrder || saving) return;
+    setSaving(true);
+    let orderNo: string | undefined;
+    try {
+      orderNo = (await placeOrder(lines, form)).orderNo; // saved for the owner's sales records
+    } catch {
+      // The order can still be sent on WhatsApp.
+    }
+    setSaving(false);
+    const url = whatsappUrl(buildOrderMessage(items, form, orderNo));
     setLink(url);
     window.open(url, "_blank", "noopener,noreferrer");
   }
@@ -95,6 +105,19 @@ export default function CheckoutView({ products }: { products: Product[] }) {
             </div>
           </fieldset>
 
+          <fieldset>
+            <legend className="mb-2 font-medium">Payment method</legend>
+            <div className="grid grid-cols-3 gap-3">
+              {(["cash", "upi", "online"] as const).map((m) => (
+                <label key={m} className={`flex min-h-12 cursor-pointer items-center justify-center rounded-xl border px-2 text-center text-sm font-medium focus-within:ring-2 focus-within:ring-gold ${form.payment === m ? "border-espresso bg-espresso text-cream" : "border-latte bg-paper"}`}>
+                  <input type="radio" name="payment" value={m} checked={form.payment === m} onChange={() => set("payment", m)} className="sr-only" />
+                  {paymentLabels[m]}
+                </label>
+              ))}
+            </div>
+            <p className="mt-2 text-sm text-roast">Nothing is charged on this site. We mark an order as paid only after the money has reached us.</p>
+          </fieldset>
+
           {delivery && (
             <div>
               <label htmlFor="address" className="mb-1 block font-medium">
@@ -118,9 +141,9 @@ export default function CheckoutView({ products }: { products: Product[] }) {
             </p>
           )}
 
-          <button type="submit" disabled={!canOrder} className="btn btn-gold w-full sm:w-auto">
+          <button type="submit" disabled={!canOrder || saving} className="btn btn-gold w-full sm:w-auto">
             <MessageCircle className="size-5" aria-hidden />
-            Order on WhatsApp
+            {saving ? "Saving your order…" : "Order on WhatsApp"}
           </button>
 
           {link && (

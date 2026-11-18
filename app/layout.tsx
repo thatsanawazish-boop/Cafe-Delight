@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import "@fontsource-variable/fraunces";
 import "@fontsource-variable/figtree";
 import "./globals.css";
@@ -9,7 +9,7 @@ import { cafe } from "@/lib/config";
 
 export const metadata: Metadata = {
   title: { default: `${cafe.name} | ${cafe.tagline}`, template: `%s | ${cafe.name}` },
-  description: `${cafe.name} serves burgers, pizza, pasta, shakes, coffee and desserts. Build your cart and order on WhatsApp.`,
+  description: `${cafe.name} serves burgers, shawarma, pizza, sandwiches, shakes and coffee. Build your cart and order on WhatsApp.`,
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -19,7 +19,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded-lg focus:bg-paper focus:px-4 focus:py-2">
           Skip to content
         </a>
-        <Navbar />
+        <Suspense fallback={null}>
+           <Navbar />
+        </Suspense>
         <main id="main" className="flex-1">
           {children}
         </main>
